@@ -83,11 +83,16 @@ jobs:
           HOST: ${{ secrets.EC2_HOST }}
           IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/demo-microservice-lab:latest
           APP_PORT: ${{ env.APP_PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DATABASE: ${{ secrets.DATABASE }}
         run: |
           set -euo pipefail
           # Pasar variables al shell remoto antes de ejecutar el script
           ssh -o IdentitiesOnly=no -o StrictHostKeyChecking=yes \
-              ec2-user@"$HOST" "IMAGE='$IMAGE' APP_PORT='$APP_PORT' bash -s" << 'EOF'
+              ec2-user@"$HOST" "IMAGE='$IMAGE' APP_PORT='$APP_PORT' DB_USER='$DB_USER' DB_PASSWORD ='$DB_PASSWORD' DB_HOST ='$DB_HOST', DB_PORT = '$DB_PORT' DATABASE ='$DATABASE' bash -s" << 'EOF'
           set -euxo pipefail
           if command -v systemctl >/dev/null 2>&1; then
             sudo systemctl start docker || true
@@ -101,5 +106,12 @@ jobs:
 
           docker pull "$IMAGE"
           docker run -d --name demo-microservice-lab --restart unless-stopped \
-            --network appnet -p 80:"$APP_PORT" "$IMAGE"
+            --network appnet -p 80:"$APP_PORT" \
+            -e PORT="$APP_PORT" \
+            -e DB_USER="$DB_USER" \
+            -e DB_PASSWORD="$DB_PASSWORD" \
+            -e DB_HOST="$DB_HOST" \
+            -e DB_PORT="$DB_PORT" \
+            -e DATABASE="$DATABASE" \
+            "$IMAGE"
           EOF
