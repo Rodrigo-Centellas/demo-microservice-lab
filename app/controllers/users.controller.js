@@ -7,15 +7,15 @@ export const getUsers = async(req, res) => {
 };
 
 
-export const getUserbyId = async (req, res) => {
-    const {id} = req.params;
-    const {rows} = await pool.query('select * from users where id = $1', [id]);
+// export const getUserbyId = async (req, res) => {
+//     const {id} = req.params;
+//     const {rows} = await pool.query('select * from users where id = $1', [id]);
 
-    if(rows.length === 0 ) {
-        return res.status(404).json({message: "user not found"});
-    }
-    res.json(rows)
-};
+//     if(rows.length === 0 ) {
+//         return res.status(404).json({message: "user not found"});
+//     }
+//     res.json(rows)
+// };
 
 export const InsertUser = async(req, res) => {
     const data = req.body;

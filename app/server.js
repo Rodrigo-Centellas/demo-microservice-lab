@@ -5,7 +5,7 @@ import express from "express";
 
 
 
-app.use(express.json()); // Middleware aplicado
+app.use(express.json()); // Middleware aplicado para leer peticion tipo post
 app.use(userRouter);     // Rutas aplicadas
 
 app.listen(PORT);
